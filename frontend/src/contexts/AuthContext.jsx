@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import server from "../utils/environment";
-import server from "../environment";
+// import server from "../environment";
 
 
 export const AuthContext = createContext({});
