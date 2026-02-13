@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const User = require("../Models/UserModel");
 const crypto = require("crypto");
+const Meeting = require("../Models/MeetingModel");
+
 
 const register = async (req, res) => {
   try {
@@ -67,4 +69,35 @@ const login = async (req, res) => {
     return res.status(500).json({ message: "Error logging in", error });
   }
 };
-module.exports = { register, login };
+
+
+const addMeetingHistory = async (req, res) => {
+  const { token, meetingId } = req.body;
+  try {
+    const user = await User.findOne({ token });
+    const meeting = new Meeting({ userId: user.username, meetingId });
+   
+
+    await meeting.save();
+    return res.status(200).json({ message: "Meeting history added successfully" });
+  } catch (error) {
+    console.error("ADD MEETING HISTORY ERROR:", error);
+    return res.status(500).json({ message: "Error adding meeting history", error });
+  } 
+};
+const getuserhistory = async (req, res) => {
+  const {token} = req.query;
+  try {
+    const user = await User.findOne({token: token});
+    if(!user){
+      return res.status(400).json({message: "Invalid token"});
+    }
+    const meeting = await Meeting.find({userId: user.username})
+    res.json(meeting);
+
+  } catch (error) {
+    console.error("GET USER HISTORY ERROR:", error);
+    return res.status(500).json({ message: "Error fetching user history", error });
+  }
+};
+module.exports = { register, login, getuserhistory, addMeetingHistory };
